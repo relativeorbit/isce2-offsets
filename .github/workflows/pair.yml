@@ -113,7 +113,8 @@ jobs:
             cp topsApp.xml output
             gdalinfo --version
             which gdal_edit.py
-            gdal_edit.py
+            which gdal_calc.py
+            # gdal_edit.py
             gdal_calc.py
             gdalwarp
 
