@@ -29,7 +29,10 @@ ISCE2 does not produce cloud-optimized geotiffs, so it's most efficient to downl
 
 ```
 # Pick a workflow ID (e.g. 8072975855)
-gh -R relativeorbit/isce2-offsets run list -w offset_pair.yml
+gh -R relativeorbit/isce2-offsets run list
+
+# Details on a specific workflow run
+gh -R relativeorbit/isce2-offsets run view 8072975855
 
 # Download to temporary scratch space
 gh -R relativeorbit/isce2-offsets run download 8072975855 --dir /tmp/052893_053418

@@ -1,6 +1,6 @@
 # Process a single image pair with ISCE2
 name: offset_pair
-run-name: ${{ inputs.reference }}_${{ inputs.secondary }}
+run-name: ${{ inputs.workflow_name }}
 
 # Set workflow input parameters and defaults
 on:
@@ -28,8 +28,8 @@ on:
           type: string
         workflow_name:
           description: 'Custom workflow name'
+          default: 'shirase'
           required: false
-          default: 'Burst2SAFE_TopsApp'
           type: string
   
   # Must duplicate inputs for workflow_call (https://github.com/orgs/community/discussions/39357)
@@ -52,7 +52,7 @@ on:
         required: false
 
 jobs:
-    burst2safe:
+    topsApp:
       name: ${{ inputs.reference }}_${{ inputs.secondary }}
       runs-on: ubuntu-latest
       defaults:

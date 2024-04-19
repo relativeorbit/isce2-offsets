@@ -18,7 +18,7 @@ on:
       workflow_name:
         description: 'Custom workflow name'
         required: false
-        default: 'Timeseries'
+        default: 'shirase'
         type: string
 
 # Convert inputs to environment variables for all job steps
@@ -62,4 +62,5 @@ jobs:
       secondary: ${{ matrix.secondary }} 
       polarization: ${{ inputs.polarization }}
       polygon: ${{ inputs.polygon }}
+      workflow_name: ${{ inputs.workflow_name }}
     secrets: inherit
