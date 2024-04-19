@@ -1,6 +1,6 @@
 # Process a single image pair with ISCE2
 name: offset_pair
-run-name: ${{ inputs.workflow_name }}
+run-name: ${{ inputs.reference }}_${{ inputs.secondary }}
 
 # Set workflow input parameters and defaults
 on:
@@ -26,11 +26,6 @@ on:
           required: false
           default: hh
           type: string
-        workflow_name:
-          description: 'Custom workflow name'
-          default: 'shirase'
-          required: false
-          type: string
   
   # Must duplicate inputs for workflow_call (https://github.com/orgs/community/discussions/39357)
   workflow_call:
@@ -45,9 +40,6 @@ on:
         type: string
         required: true
       polarization:
-        type: string
-        required: false
-      workflow_name:
         type: string
         required: false
 

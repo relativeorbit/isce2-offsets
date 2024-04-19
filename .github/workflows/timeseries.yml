@@ -62,5 +62,4 @@ jobs:
       secondary: ${{ matrix.secondary }} 
       polarization: ${{ inputs.polarization }}
       polygon: ${{ inputs.polygon }}
-      workflow_name: ${{ inputs.workflow_name }}
     secrets: inherit
