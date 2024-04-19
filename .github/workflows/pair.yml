@@ -86,13 +86,13 @@ jobs:
             echo "machine dataspace.copernicus.eu login $ESA_USERNAME password $ESA_PASSWORD" >> ~/.netrc
             chmod 0600 ~/.netrc
         
-        # - name: Prepare ISCE2 TopsApp.py
-        #   run: |
-        #     ./scripts/burst2topsapp.py \
-        #       --reference ${{ inputs.reference }} \
-        #       --secondary ${{ inputs.secondary }} \
-        #       --wkt "${{ inputs.polygon }}" \
-        #       --pol ${{ inputs.polarization }} \
+        - name: Prepare ISCE2 TopsApp.py
+          run: |
+            ./scripts/burst2topsapp.py \
+              --reference ${{ inputs.reference }} \
+              --secondary ${{ inputs.secondary }} \
+              --wkt "${{ inputs.polygon }}" \
+              --pol ${{ inputs.polarization }} \
         
         - name: Modify Outputs
           continue-on-error: true
@@ -111,4 +111,4 @@ jobs:
           with:
             name: ${{ inputs.reference }}_${{ inputs.secondary }}
             path: |
-              output
+              merged
