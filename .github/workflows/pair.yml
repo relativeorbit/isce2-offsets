@@ -94,12 +94,7 @@ jobs:
             export PATH=$PATH:$ISCE_HOME/applications
             topsApp.py 
 
-        - name: Customize output folder
-          run: |
-            export PATH=$PATH:$ISCE_HOME/applications
-            topsApp.py 
-
-        # TODO: use unique folder name, convert TIFs to COGs, upload to S3
+        # TODO: instead of entire merged/ folder upload TIFs to COGs in UTM/polar stereographic
         - name: Upload Merged Outputs
           uses: actions/upload-artifact@v4
           with:
