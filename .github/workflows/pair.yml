@@ -108,18 +108,14 @@ jobs:
         # Match Hyp3 conventions (https://github.com/relativeorbit/hyp3-isce2/blob/cb09db2a1b38fb940a43145d603b3fa18f834aab/src/hyp3_isce2/insar_tops_fufiters.py#L485)
         # TODO: turn this into a script
         - name: Convert Outputs
+          continue-on-error: true
           run: |
             mkdir output
             cp topsApp.xml output
             gdalinfo --version
-            which gdal_edit.py
-            which gdal_calc.py
-            # gdal_edit.py
-            gdal_calc.py
-            gdalwarp
 
             # Amplitude and Wrapped Phase
-            # gdal_edit.py -a_nodata 0.0 merged/filt_topophase.flat.geo.vrt
+            gdal_edit.py -a_nodata 0.0 merged/filt_topophase.flat.geo.vrt
             # gdal_calc.py --overwrite --outfile merged/filt_wrapped_phase.tif -A  merged/filt_topophase.flat.geo.vrt --calc "angle(A)" --type Float32 --format GTiff --NoDataValue=0 
             # gdal_calc.py --overwrite --outfile merged/amplitude.tif -A merged/filt_topophase.flat.geo.vrt --calc "abs(A)" --type Float32 --format GTiff --NoDataValue=0 
             # gdalwarp -tap -tr 30 30 -t_srs EPSG:3031 -of COG merged/filt_wrapped_phase.tif  output/filt_wrapped_phase.tif 
