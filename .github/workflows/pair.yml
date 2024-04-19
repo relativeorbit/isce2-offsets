@@ -111,32 +111,33 @@ jobs:
           run: |
             mkdir output
             cp topsApp.xml output
+            gdalinfo --version
 
-            # Amplitude and Wrapped Phase
-            gdal_edit.py -a_nodata 0.0 merged/filt_topophase.flat.geo.vrt
-            # gdal_calc.py --overwrite --outfile merged/filt_wrapped_phase.tif -A  merged/filt_topophase.flat.geo.vrt --calc "angle(A)" --type Float32 --format GTiff --NoDataValue=0 
-            gdal_calc.py --overwrite --outfile merged/amplitude.tif -A merged/filt_topophase.flat.geo.vrt --calc "abs(A)" --type Float32 --format GTiff --NoDataValue=0 
-            # gdalwarp -tap -tr 30 30 -t_srs EPSG:3031 -of COG merged/filt_wrapped_phase.tif  output/filt_wrapped_phase.tif 
-            gdalwarp -tap -tr 30 30 -t_srs EPSG:3031 -of COG merged/amplitude.tif output/amplitude.tif 
+            # # Amplitude and Wrapped Phase
+            # gdal_edit.py -a_nodata 0.0 merged/filt_topophase.flat.geo.vrt
+            # # gdal_calc.py --overwrite --outfile merged/filt_wrapped_phase.tif -A  merged/filt_topophase.flat.geo.vrt --calc "angle(A)" --type Float32 --format GTiff --NoDataValue=0 
+            # gdal_calc.py --overwrite --outfile merged/amplitude.tif -A merged/filt_topophase.flat.geo.vrt --calc "abs(A)" --type Float32 --format GTiff --NoDataValue=0 
+            # # gdalwarp -tap -tr 30 30 -t_srs EPSG:3031 -of COG merged/filt_wrapped_phase.tif  output/filt_wrapped_phase.tif 
+            # gdalwarp -tap -tr 30 30 -t_srs EPSG:3031 -of COG merged/amplitude.tif output/amplitude.tif 
 
-            # Coherence
-            gdal_edit.py -a_nodata 0.0 merged/phsig.cor.geo.vrt
-            gdalwarp -tap -tr 30 30 -t_srs EPSG:3031 -of COG merged/phsig.cor.geo.vrt output/phsig.cor.tif
+            # # Coherence
+            # gdal_edit.py -a_nodata 0.0 merged/phsig.cor.geo.vrt
+            # gdalwarp -tap -tr 30 30 -t_srs EPSG:3031 -of COG merged/phsig.cor.geo.vrt output/phsig.cor.tif
 
-            # Offsets
-            gdal_translate -b 1 -a_nodata 0.0 merged/filt_dense_offsets.bil.geo.vrt merged/filt_dense_offsets.bil.geo.azi.vrt
-            gdal_translate -b 2 -a_nodata 0.0 merged/filt_dense_offsets.bil.geo.vrt merged/filt_dense_offsets.bil.geo.rng.vrt
-            gdal_edit.py -a_nodata 0.0 merged/dense_offsets_snr.bil.geo.vrt
-            gdalwarp -tap -tr 30 30 -t_srs EPSG:3031 -of COG merged/filt_dense_offsets.bil.geo.azi.vrt output/filt_dense_offsets.azi.tif
-            gdalwarp -tap -tr 30 30 -t_srs EPSG:3031 -of COG merged/filt_dense_offsets.bil.geo.rng.vrt output/filt_dense_offsets.rng.tif
-            gdalwarp -tap -tr 30 30 -t_srs EPSG:3031 -of COG merged/dense_offsets_snr.bil.geo.vrt output/dense_offsets_snr.tif
+            # # Offsets
+            # gdal_translate -b 1 -a_nodata 0.0 merged/filt_dense_offsets.bil.geo.vrt merged/filt_dense_offsets.bil.geo.azi.vrt
+            # gdal_translate -b 2 -a_nodata 0.0 merged/filt_dense_offsets.bil.geo.vrt merged/filt_dense_offsets.bil.geo.rng.vrt
+            # gdal_edit.py -a_nodata 0.0 merged/dense_offsets_snr.bil.geo.vrt
+            # gdalwarp -tap -tr 30 30 -t_srs EPSG:3031 -of COG merged/filt_dense_offsets.bil.geo.azi.vrt output/filt_dense_offsets.azi.tif
+            # gdalwarp -tap -tr 30 30 -t_srs EPSG:3031 -of COG merged/filt_dense_offsets.bil.geo.rng.vrt output/filt_dense_offsets.rng.tif
+            # gdalwarp -tap -tr 30 30 -t_srs EPSG:3031 -of COG merged/dense_offsets_snr.bil.geo.vrt output/dense_offsets_snr.tif
 
-            # Geometry files
-            gdal_edit.py -a_nodata 0.0 merged/los.rdr.geo.vrt
-            gdal_calc.py --overwrite --outfile merged/lv_theta.tif -A merged/los.rdr.geo.vrt --A_band=1 --calc "(90-A)*pi/180" --type Float32 --format GTiff --NoDataValue=0 
-            gdal_calc.py --overwrite --outfile merged/lv_phi.tif -A merged/los.rdr.geo.vrt --A_band=2 --calc "(90+A)*pi/180" --type Float32 --format GTiff --NoDataValue=0 
-            gdalwarp -tap -tr 30 30 -t_srs EPSG:3031 -of COG merged/lv_theta.tif output/lv_theta.tif 
-            gdalwarp -tap -tr 30 30 -t_srs EPSG:3031 -of COG merged/lv_phi.tif output/lv_phi.tif 
+            # # Geometry files
+            # gdal_edit.py -a_nodata 0.0 merged/los.rdr.geo.vrt
+            # gdal_calc.py --overwrite --outfile merged/lv_theta.tif -A merged/los.rdr.geo.vrt --A_band=1 --calc "(90-A)*pi/180" --type Float32 --format GTiff --NoDataValue=0 
+            # gdal_calc.py --overwrite --outfile merged/lv_phi.tif -A merged/los.rdr.geo.vrt --A_band=2 --calc "(90+A)*pi/180" --type Float32 --format GTiff --NoDataValue=0 
+            # gdalwarp -tap -tr 30 30 -t_srs EPSG:3031 -of COG merged/lv_theta.tif output/lv_theta.tif 
+            # gdalwarp -tap -tr 30 30 -t_srs EPSG:3031 -of COG merged/lv_phi.tif output/lv_phi.tif 
 
         - name: Report Runner Specs
           run: | 
