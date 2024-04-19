@@ -1,6 +1,6 @@
 # Process a single image pair with ISCE2
 name: offset_pair
-run-name: ${{ inputs.workflow_name }}
+run-name: ${{ inputs.reference }}_${{ inputs.secondary }}
 
 # Set workflow input parameters and defaults
 on:

@@ -10,12 +10,15 @@
     <property name="swaths">{{SWATH_LIST}}</property>
     <property name="range looks">7</property>
     <property name="azimuth looks">3</property>
-    <property name="do unwrap">False</property>
     <property name="do esd">False</property>
+    <property name="do ionosphere correction">False</property>
+    <property name="apply ionosphere correction">False</property>
+    <property name="do unwrap">False</property>
     <property name="unwrapper name">snaphu_mcf</property>
     <property name="do denseoffsets">True</property>
     <property name="demfilename">elevation.dem</property>
     <property name="geocode demfilename">elevation.dem</property>
-    <!--property name="geocode list">['merged/phsig.cor', 'merged/filt_topophase.unw', 'merged/los.rdr', 'merged/topophase.flat', 'merged/filt_topophase.flat','merged/topophase.cor','merged/filt_topophase.unw.conncomp']</property>-->
+    <property name="geocode list">['merged/los.rdr', 'merged/topophase.flat', 'merged/topophase.cor']</property>
+    <property name="offset geocode list">['merged/filt_dense_offsets.bil','merged/dense_offsets_snr.bil']</property>
   </component>
 </topsApp>
