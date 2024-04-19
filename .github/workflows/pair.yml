@@ -1,0 +1,116 @@
+# Process a single image pair with ISCE2
+name: offset_pair
+run-name: ${{ inputs.workflow_name }}
+
+# Set workflow input parameters and defaults
+on:
+  workflow_dispatch:
+      inputs:
+        polygon:
+          type: string
+          required: true
+          description: AOI WKT
+          default: 'POLYGON ((38.6401149641734 -69.9149589283716,38.0950151069544 -70.0278414394631,39.3056438596154 -70.5135264611673,40.1296320158775 -70.3031189013304,38.6401149641734 -69.9149589283716))'
+        reference:
+          type: number
+          required: true
+          description: Reference Absolute Orbit
+          default: 052893
+        secondary:
+          type: number
+          required: true
+          description: Secondary Reference Orbit
+          default: 053418
+        polarization:
+          description: 'Polarization'
+          required: false
+          default: hh
+          type: string
+        workflow_name:
+          description: 'Custom workflow name'
+          required: false
+          default: 'Burst2SAFE_TopsApp'
+          type: string
+  
+  # Must duplicate inputs for workflow_call (https://github.com/orgs/community/discussions/39357)
+  workflow_call:
+    inputs:
+      polygon:
+        type: string
+        required: true
+      reference:
+        type: string
+        required: true
+      secondary:
+        type: string
+        required: true
+      polarization:
+        type: string
+        required: false
+      workflow_name:
+        type: string
+        required: false
+
+jobs:
+    burst2safe:
+      name: ${{ inputs.reference }}_${{ inputs.secondary }}
+      runs-on: ubuntu-latest
+      defaults:
+        run:
+            shell: bash -el {0}
+
+      steps:
+        - name: Checkout Repository
+          uses: actions/checkout@v4
+
+        # https://github.com/actions/runner-images/issues/2840#issuecomment-790492173
+        - name: Free up disk space
+          run: |
+            df -h
+            sudo apt clean
+            sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc
+            df -h
+
+        - name: Install Conda environment with Micromamba
+          uses: mamba-org/setup-micromamba@v1
+          with:
+            cache-environment: true
+            environment-file: environment-burst2safe.yml
+
+        # NOTE: not ideal. maybe use earthaccess python library?
+        - name: Configure NASA & ESA NETRC
+          env: 
+            EARTHDATA_USERNAME: ${{ secrets.EARTHDATA_USERNAME }}
+            EARTHDATA_PASSWORD: ${{ secrets.EARTHDATA_PASSWORD}}
+            ESA_USERNAME: ${{ secrets.ESA_USERNAME }}
+            ESA_PASSWORD: ${{ secrets.ESA_PASSWORD}}
+          run: |
+            echo "machine urs.earthdata.nasa.gov login $EARTHDATA_USERNAME password $EARTHDATA_PASSWORD" > ~/.netrc
+            echo "machine dataspace.copernicus.eu login $ESA_USERNAME password $ESA_PASSWORD" >> ~/.netrc
+            chmod 0600 ~/.netrc
+        
+        - name: Prepare ISCE2 TopsApp.py
+          run: |
+            ./scripts/burst2topsapp.py \
+              --reference ${{ inputs.reference }} \
+              --secondary ${{ inputs.secondary }} \
+              --wkt "${{ inputs.polygon }}" \
+              --pol ${{ inputs.polarization }} \
+
+        - name: Run ISCE2 TopsApp.py
+          run: |
+            export PATH=$PATH:$ISCE_HOME/applications
+            topsApp.py 
+
+        - name: Customize output folder
+          run: |
+            export PATH=$PATH:$ISCE_HOME/applications
+            topsApp.py 
+
+        # TODO: use unique folder name, convert TIFs to COGs, upload to S3
+        - name: Upload Merged Outputs
+          uses: actions/upload-artifact@v4
+          with:
+            name: ${{ inputs.reference }}_${{ inputs.secondary }}
+            path: |
+              merged

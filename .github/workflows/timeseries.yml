@@ -1,0 +1,65 @@
+# Monthly offset pairs
+name: offset_timeseries
+run-name: ${{ inputs.workflow_name }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      polygon:
+        type: string
+        required: true
+        description: AOI WKT
+        default: 'POLYGON ((38.6401149641734 -69.9149589283716,38.0950151069544 -70.0278414394631,39.3056438596154 -70.5135264611673,40.1296320158775 -70.3031189013304,38.6401149641734 -69.9149589283716))'
+      polarization:
+        description: 'Polarization'
+        required: false
+        default: hh
+        type: string
+      workflow_name:
+        description: 'Custom workflow name'
+        required: false
+        default: 'Timeseries'
+        type: string
+
+# Convert inputs to environment variables for all job steps
+env:
+  POLYGON: ${{ inputs.polygon }}
+  POLARIZATION: ${{ inputs.polarization }}
+
+jobs:
+  searchASF:
+    runs-on: ubuntu-latest
+    # Map a step output to a job output
+    outputs:
+      MATRIX: ${{ steps.asf-search.outputs.MATRIX_PARAMS_COMBINATIONS }}
+    defaults:
+      run:
+        shell: bash -el {0}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install Conda environment with Micromamba
+        uses: mamba-org/setup-micromamba@v1
+        with:
+          cache-environment: true
+          environment-file: environment-burst2safe.yml
+
+      # Call python script that sets needed environment variables for next job
+      - name: Search ASF for bursts
+        id: asf-search
+        run: | 
+          python scripts/getBurstPairs.py
+
+  isce2:
+    needs: searchASF
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.searchASF.outputs.MATRIX) }}
+    uses: ./.github/workflows/pair.yml
+    with:
+      reference: ${{ matrix.reference }}
+      secondary: ${{ matrix.secondary }} 
+      polarization: ${{ inputs.polarization }}
+      polygon: ${{ inputs.polygon }}
+    secrets: inherit

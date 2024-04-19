@@ -1,0 +1,11 @@
+name: burst2safe
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - isce2=2.6
+  - burst2safe
+  - sardem 
+  - sentineleof
+  - asf_search
+  - geopandas

@@ -1,0 +1,6 @@
+<component name="secondary">
+    <property name="orbit directory">./</property>
+    <property name="output directory">secondary</property>
+    <property name="polarization">{{POL}}</property>
+    <property name="safe">{{SECONDARY_SAFE}}</property>
+</component>
