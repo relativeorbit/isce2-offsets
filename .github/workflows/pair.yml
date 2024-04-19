@@ -54,11 +54,16 @@ jobs:
       steps:
         - name: Checkout Repository
           uses: actions/checkout@v4
+        
+        - name: Report Runner Specs
+          run: | 
+            lscpu 
+            free -h 
+            df -h
 
         # https://github.com/actions/runner-images/issues/2840#issuecomment-790492173
         - name: Free up disk space
           run: |
-            df -h
             sudo apt clean
             sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc
             df -h
@@ -89,10 +94,15 @@ jobs:
               --wkt "${{ inputs.polygon }}" \
               --pol ${{ inputs.polarization }} \
 
-        - name: Run ISCE2 TopsApp.py
+        - name: DEBUG
           run: |
-            export PATH=$PATH:$ISCE_HOME/applications
-            topsApp.py 
+            mkdir merged
+            touch merged/filt_topophase.flat.geo.vrt
+
+        # - name: Run ISCE2 TopsApp.py
+        #   run: |
+        #     export PATH=$PATH:$ISCE_HOME/applications
+        #     topsApp.py 
         
         # NOTE: hardcoded south polar sterographic currently
         # Match Hyp3 conventions (https://github.com/relativeorbit/hyp3-isce2/blob/cb09db2a1b38fb940a43145d603b3fa18f834aab/src/hyp3_isce2/insar_tops_fufiters.py#L485)
@@ -128,6 +138,11 @@ jobs:
             gdalwarp -tap -tr 30 30 -t_srs EPSG:3031 -of COG merged/lv_theta.tif output/lv_theta.tif 
             gdalwarp -tap -tr 30 30 -t_srs EPSG:3031 -of COG merged/lv_phi.tif output/lv_phi.tif 
 
+        - name: Report Runner Specs
+          run: | 
+            du -sh *
+            free -h 
+            df -h
 
         - name: Upload Merged Outputs
           uses: actions/upload-artifact@v4
